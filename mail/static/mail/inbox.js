@@ -5,10 +5,28 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelector('#sent').addEventListener('click', () => load_mailbox('sent'));
   document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
   document.querySelector('#compose').addEventListener('click', compose_email);
+  document.querySelector('#compose-form').onsubmit = send_email;
+
 
   // By default, load the inbox
   load_mailbox('inbox');
 });
+
+function send_email(){
+  fetch('/emails', {
+    method: 'POST',
+    body: JSON.stringify({
+        recipients: `${document.querySelector('#compose-recipients').value}`,
+        subject: `${document.querySelector('#compose-subject').value}`,
+        body: `${document.querySelector('#compose-body').value}`
+    }),
+  })
+  .then(response => response.json())
+  .then(result => {
+      // Print result
+      console.log(result);
+  });
+}
 
 function compose_email() {
 
@@ -20,6 +38,9 @@ function compose_email() {
   document.querySelector('#compose-recipients').value = '';
   document.querySelector('#compose-subject').value = '';
   document.querySelector('#compose-body').value = '';
+  // Sending an email 
+
+
 }
 
 function load_mailbox(mailbox) {
@@ -30,4 +51,21 @@ function load_mailbox(mailbox) {
 
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
+  fetch(`/emails/${mailbox}`)
+  .then(response => response.json())
+  .then(emails => {
+    // Print emails
+    console.log(emails);
+    emails.forEach(email => {
+      const element = document.createElement('div');
+      element.innerHTML = `${email.recipients[0]}` + `${email.body}` + `${email.timestamp}`;
+      element.setAttribute('id', 'emails');
+      element.classList.add('card');
+      document.querySelector('#emails-view').append(element);
+
+    });
+  });
+  
+  
 }
+

@@ -1,3 +1,11 @@
 textarea {
     min-height: 400px;
 }
+
+.card
+{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    flex: 1;
+}
