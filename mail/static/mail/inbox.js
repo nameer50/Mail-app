@@ -58,7 +58,17 @@ function load_mailbox(mailbox) {
     console.log(emails);
     emails.forEach(email => {
       const element = document.createElement('div');
-      element.innerHTML = `${email.recipients[0]}` + `${email.body}` + `${email.timestamp}`;
+      if (mailbox == 'sent'){
+        element.innerHTML = `<p>${email.recipients[0]} </p>` + `<p>${email.body} </p>` + `<p>${email.timestamp}</p>`;
+      }
+      else if (mailbox == 'inbox'){
+        element.innerHTML = `<p>${email.sender} </p>` + `<p>${email.body} </p>` + `<p>${email.timestamp}</p>`;
+
+      }
+      else
+      {
+
+      }
       element.setAttribute('id', 'emails');
       element.classList.add('card');
       document.querySelector('#emails-view').append(element);
