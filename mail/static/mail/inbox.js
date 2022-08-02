@@ -6,13 +6,17 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
   document.querySelector('#compose').addEventListener('click', compose_email);
   document.querySelector('#compose-form').onsubmit = send_email;
-
-
+  document.querySelectorAll('#emails').forEach(div => {
+    div.onclick = () => {
+      console.log('hi');
+    }
+  });
   // By default, load the inbox
   load_mailbox('inbox');
 });
 
-function send_email(){
+function send_email(event){
+  event.preventDefault();
   fetch('/emails', {
     method: 'POST',
     body: JSON.stringify({
@@ -27,6 +31,11 @@ function send_email(){
       console.log(result);
   });
 }
+
+function view_email(){
+  console.log('clicked on email');
+}
+
 
 function compose_email() {
 
@@ -66,6 +75,7 @@ function load_mailbox(mailbox) {
 
       }
       else
+      // Archived emails
       {
 
       }
