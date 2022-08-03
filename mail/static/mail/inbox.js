@@ -6,11 +6,6 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
   document.querySelector('#compose').addEventListener('click', compose_email);
   document.querySelector('#compose-form').onsubmit = send_email;
-  document.querySelectorAll('#emails').forEach(div => {
-    div.onclick = () => {
-      console.log('hi');
-    }
-  });
   // By default, load the inbox
   load_mailbox('inbox');
 });
@@ -79,9 +74,20 @@ function load_mailbox(mailbox) {
       {
 
       }
-      element.setAttribute('id', 'emails');
+      element.setAttribute('id', `${email.id}`);
       element.classList.add('card');
       document.querySelector('#emails-view').append(element);
+      element.addEventListener('click', () => {
+       
+        fetch(`/emails/${element.id}`)
+        .then(response => response.json())
+        .then(email => {
+          // Print email
+          console.log(email);
+
+   
+  });
+      });
 
     });
   });
