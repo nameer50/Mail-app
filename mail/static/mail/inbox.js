@@ -20,13 +20,16 @@ function send_email(event){
         recipients: `${document.querySelector('#compose-recipients').value}`,
         subject: `${document.querySelector('#compose-subject').value}`,
         body: `${document.querySelector('#compose-body').value}`
+        
     }),
   })
   .then(response => response.json())
   .then(result => {
       // Print result
       console.log(result);
+      load_mailbox('inbox');
   });
+  
 }
 
 function compose_email() {
@@ -76,8 +79,9 @@ function load_mailbox(mailbox) {
 
       element.setAttribute('id', `${email.id}`);
       element.classList.add('card');
+      element.addEventListener('click', () => show_email(email.id));
       document.querySelector('#emails-view').append(element);
-      element.addEventListener('click', () => show_email(email.id))
+      
 
     });
   });
@@ -88,25 +92,29 @@ function show_email(id){
   // Show the email in full view
   // Show the full view div, hide others
   // Create elements and append to full view div
-
   document.querySelector('#emails-view').style.display = 'none';
-        document.querySelector('#compose-view').style.display = 'none';
-        document.querySelector('#email-full-view').style.display = 'block';
-        fetch(`/emails/${id}`)
-        .then(response => response.json())
-        .then(email => {
-          
-          console.log(email);
-          const mail = document.createElement('');
-          
-          document.querySelector('#email-full-view').append(mail);
+  document.querySelector('#compose-view').style.display = 'none';
+  document.querySelector('#email-full-view').innerHTML = '';
+  document.querySelector('#email-full-view').style.display = 'block';
+  fetch(`/emails/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+        read: true
+    })
+  });
 
-
-
-
-     
-
-
+  fetch(`/emails/${id}`)
+  .then(response => response.json())
+  .then(email => {
+    console.log(email);
+    const mail = document.createElement('div');
+    mail.innerHTML = `<h5 class='card-title' style='font-weight:bold;'>${email.subject}</h5>`;
+    mail.innerHTML += `<h6 class='card-subtitle mb-2 text-muted'>From: ${email.sender}</h6>`;
+    mail.innerHTML += `<h6 class='card-subtitle mb-2 text-muted'>To: ${email.recipients[0]}</h6>`;
+    mail.innerHTML += `<h6 class='card-subtitle mb-2 text-muted'>${email.timestamp}</h6>`;
+    mail.innerHTML += `<p class='card-text'>${email.body}</p>`;
+    mail.classList.add('card-body');
+    document.querySelector('#email-full-view').append(mail);
         
 });
 
