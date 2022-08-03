@@ -10,6 +10,8 @@ document.addEventListener('DOMContentLoaded', function() {
   load_mailbox('inbox');
 });
 
+
+
 function send_email(event){
   event.preventDefault();
   fetch('/emails', {
@@ -27,11 +29,6 @@ function send_email(event){
   });
 }
 
-function view_email(){
-  console.log('clicked on email');
-}
-
-
 function compose_email() {
 
   // Show compose view and hide other views
@@ -43,7 +40,7 @@ function compose_email() {
   document.querySelector('#compose-recipients').value = '';
   document.querySelector('#compose-subject').value = '';
   document.querySelector('#compose-body').value = '';
-  // Sending an email 
+  
 
 
 }
@@ -64,6 +61,8 @@ function load_mailbox(mailbox) {
     console.log(emails);
     emails.forEach(email => {
       const element = document.createElement('div');
+
+      // Display relevant info according to mailbox
       if (mailbox == 'sent'){
         element.innerHTML = `<p>${email.recipients[0]} </p>` + `<p>${email.body} </p>` + `<p>${email.timestamp}</p>`;
       }
@@ -71,32 +70,46 @@ function load_mailbox(mailbox) {
         element.innerHTML = `<p>${email.sender} </p>` + `<p>${email.body} </p>` + `<p>${email.timestamp}</p>`;
 
       }
-      else
-      // Archived emails
-      {
+      else{
 
       }
+
       element.setAttribute('id', `${email.id}`);
       element.classList.add('card');
       document.querySelector('#emails-view').append(element);
-      element.addEventListener('click', () => {
-        document.querySelector('#emails-view').style.display = 'none';
-        document.querySelector('#compose-view').style.display = 'none';
-        document.querySelector('#email-full-view').style.display = 'block';
-        fetch(`/emails/${element.id}`)
-        .then(response => response.json())
-        .then(email => {
-          // Print email
-          console.log(email);
-
-
-   
-  });
-      });
+      element.addEventListener('click', () => show_email(email.id))
 
     });
   });
-  
-  
 }
+
+function show_email(id){
+
+  // Show the email in full view
+  // Show the full view div, hide others
+  // Create elements and append to full view div
+
+  document.querySelector('#emails-view').style.display = 'none';
+        document.querySelector('#compose-view').style.display = 'none';
+        document.querySelector('#email-full-view').style.display = 'block';
+        fetch(`/emails/${id}`)
+        .then(response => response.json())
+        .then(email => {
+          
+          console.log(email);
+          const mail = document.createElement('');
+          
+          document.querySelector('#email-full-view').append(mail);
+
+
+
+
+     
+
+
+        
+});
+
+}
+
 
