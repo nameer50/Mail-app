@@ -37,6 +37,7 @@ function compose_email() {
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
+  document.querySelector('#email-full-view').style.display = 'none';
 
   // Clear out composition fields
   document.querySelector('#compose-recipients').value = '';
@@ -51,6 +52,7 @@ function load_mailbox(mailbox) {
   
   // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
+  document.querySelector('#email-full-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'none';
 
   // Show the mailbox name
@@ -78,12 +80,15 @@ function load_mailbox(mailbox) {
       element.classList.add('card');
       document.querySelector('#emails-view').append(element);
       element.addEventListener('click', () => {
-       
+        document.querySelector('#emails-view').style.display = 'none';
+        document.querySelector('#compose-view').style.display = 'none';
+        document.querySelector('#email-full-view').style.display = 'block';
         fetch(`/emails/${element.id}`)
         .then(response => response.json())
         .then(email => {
           // Print email
           console.log(email);
+
 
    
   });
