@@ -115,17 +115,20 @@ function show_email(id,mailbox){
     mail.innerHTML += `<h6 class='card-subtitle mb-2 text-muted'>To: ${email.recipients[0]}</h6>`;
     mail.innerHTML += `<h6 class='card-subtitle mb-2 text-muted'>${email.timestamp}</h6>`;
     if (mailbox=='inbox'){
-    mail.innerHTML += `<button id="archive" value=${id}>Archive</button>`;
+    mail.innerHTML += `<button id="archive" value='archive'>Archive</button>`;
    
     }
     if (mailbox =='archive'){
-      mail.innerHTML += `<button id="archive" value=${id}>Unarchive</button>`;
+      mail.innerHTML += `<button id="archive" value='unarchive'>Unarchive</button>`;
       
     }
     mail.innerHTML += `<p class='card-text'>${email.body}</p>`;
     mail.classList.add('card-body');
     document.querySelector('#email-full-view').append(mail);
-    document.querySelector('#archive').addEventListener('click', () => archive_email(id));
+    document.querySelectorAll('#archive').forEach(el => {
+      el.addEventListener('click', () => archive_email(el,id));
+    });
+   
 
 
         
@@ -133,16 +136,27 @@ function show_email(id,mailbox){
 
 }
 
-function archive_email(id){
-  
+function archive_email(el,id){
+  if (el.value == 'archive'){
   fetch(`/emails/${id}`, {
     method: 'PUT',
     body: JSON.stringify({
         archived: true
     })
   });
+}
+else {
+  fetch(`/emails/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+        archived: false
+    })
+  });
 
 }
+
+}
+
 
 
 
