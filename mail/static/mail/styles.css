@@ -12,6 +12,8 @@ textarea {
     padding: 0rem 1rem 0rem 1rem;
   
 }
-
+.card-text:first-of-type{
+    margin-top: 20px;
+}
 
 

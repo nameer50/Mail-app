@@ -62,16 +62,14 @@ function load_mailbox(mailbox) {
       const element = document.createElement('div');
 
       // Display relevant info according to mailbox
-      if (mailbox == 'sent'){
-        element.innerHTML = `<p>${email.recipients[0]} </p>` + `<p>${email.body} </p>` + `<p>${email.timestamp}</p>`;
+      if (mailbox == 'sent' || mailbox == 'archive'){
+        element.innerHTML = `<p>${email.recipients[0]} </p>` + `<p>${email.subject} </p>` + `<p>${email.timestamp}</p>`;
       }
       else if (mailbox == 'inbox'){
-        element.innerHTML = `<p>${email.sender} </p>` + `<p>${email.body} </p>` + `<p>${email.timestamp}</p>`;
+        element.innerHTML = `<p>${email.sender} </p>` + `<p>${email.subject} </p>` + `<p>${email.timestamp}</p>`;
 
       }
-      else if (mailbox =='archive'){
-        element.innerHTML = 'yolo';
-      }
+     
 
       element.setAttribute('id', `${email.id}`);
       element.classList.add('card');
@@ -111,6 +109,7 @@ function show_email(id,mailbox){
     mail.innerHTML += `<h6 class='card-subtitle mb-2 text-muted'>From: ${email.sender}</h6>`;
     mail.innerHTML += `<h6 class='card-subtitle mb-2 text-muted'>To: ${email.recipients[0]}</h6>`;
     mail.innerHTML += `<h6 class='card-subtitle mb-2 text-muted'>${email.timestamp}</h6>`;
+    mail.innerHTML += `<button id="reply">Reply</button>`;
     if (mailbox=='inbox'){
     mail.innerHTML += `<button id="archive" value='archive'>Archive</button>`;
    
@@ -119,13 +118,40 @@ function show_email(id,mailbox){
       mail.innerHTML += `<button id="archive" value='unarchive'>Unarchive</button>`;
       
     }
-    mail.innerHTML += `<p class='card-text'>${email.body}</p>`;
+    const arr = email.body.split('\n');
+    arr.forEach(el => {
+      mail.innerHTML += `<p class='card-text'>${el}</p>`;
+
+    })
+    
     mail.classList.add('card-body');
     document.querySelector('#email-full-view').append(mail);
     document.querySelectorAll('#archive').forEach(el => {
       el.addEventListener('click', () => archive_email(el,id));
-    });    
+    });
+    document.querySelector('#reply').addEventListener('click', () => {
+
+      document.querySelector('#emails-view').style.display = 'none';
+      document.querySelector('#compose-view').style.display = 'block';
+      document.querySelector('#email-full-view').style.display = 'none';
+      document.querySelector('#compose-recipients').value = '';
+      document.querySelector('#compose-subject').value = '';
+      document.querySelector('#compose-body').value = '';
+      
+
+      document.querySelector('#compose-recipients').value = email.sender;
+      if (email.subject.split(' ')[0] === 'Re:'){
+        document.querySelector('#compose-subject').value = email.subject;
+      }
+      else{
+      document.querySelector('#compose-subject').value = 'Re:' + ' ' + email.subject;
+      }
+      document.querySelector('#compose-body').value = `\nOn ${email.timestamp} ${email.sender} wrote:\n${email.body}\n\n`;
+
+    })
 });
+
+
 
 }
 
@@ -146,6 +172,7 @@ function archive_email(el,id){
       })
     });
   }
+  
 
   load_mailbox('inbox');
   
