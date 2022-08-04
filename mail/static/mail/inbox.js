@@ -10,8 +10,6 @@ document.addEventListener('DOMContentLoaded', function() {
   load_mailbox('inbox');
 });
 
-
-
 function send_email(event){
   event.preventDefault();
   fetch('/emails', {
@@ -43,8 +41,6 @@ function compose_email() {
   document.querySelector('#compose-recipients').value = '';
   document.querySelector('#compose-subject').value = '';
   document.querySelector('#compose-body').value = '';
-  
-
 
 }
 
@@ -75,12 +71,13 @@ function load_mailbox(mailbox) {
       }
       else if (mailbox =='archive'){
         element.innerHTML = 'yolo';
-
-      
       }
 
       element.setAttribute('id', `${email.id}`);
       element.classList.add('card');
+      if (email.read){
+        element.style.backgroundColor = '#d3d3d3';
+      }
       element.addEventListener('click', () => show_email(email.id,mailbox));
       document.querySelector('#emails-view').append(element);
       
@@ -127,11 +124,7 @@ function show_email(id,mailbox){
     document.querySelector('#email-full-view').append(mail);
     document.querySelectorAll('#archive').forEach(el => {
       el.addEventListener('click', () => archive_email(el,id));
-    });
-   
-
-
-        
+    });    
 });
 
 }
@@ -142,19 +135,20 @@ function archive_email(el,id){
     method: 'PUT',
     body: JSON.stringify({
         archived: true
-    })
-  });
-}
-else {
-  fetch(`/emails/${id}`, {
-    method: 'PUT',
-    body: JSON.stringify({
+      })
+    });
+  }
+  else {
+    fetch(`/emails/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify({
         archived: false
-    })
-  });
+      })
+    });
+  }
 
-}
-
+  load_mailbox('inbox');
+  
 }
 
 
