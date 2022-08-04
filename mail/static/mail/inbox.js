@@ -27,7 +27,7 @@ function send_email(event){
   .then(result => {
       // Print result
       console.log(result);
-      load_mailbox('inbox');
+      load_mailbox('sent');
   });
   
 }
@@ -73,13 +73,15 @@ function load_mailbox(mailbox) {
         element.innerHTML = `<p>${email.sender} </p>` + `<p>${email.body} </p>` + `<p>${email.timestamp}</p>`;
 
       }
-      else{
+      else if (mailbox =='archive'){
+        element.innerHTML = 'yolo';
 
+      
       }
 
       element.setAttribute('id', `${email.id}`);
       element.classList.add('card');
-      element.addEventListener('click', () => show_email(email.id));
+      element.addEventListener('click', () => show_email(email.id,mailbox));
       document.querySelector('#emails-view').append(element);
       
 
@@ -87,7 +89,7 @@ function load_mailbox(mailbox) {
   });
 }
 
-function show_email(id){
+function show_email(id,mailbox){
 
   // Show the email in full view
   // Show the full view div, hide others
@@ -112,12 +114,36 @@ function show_email(id){
     mail.innerHTML += `<h6 class='card-subtitle mb-2 text-muted'>From: ${email.sender}</h6>`;
     mail.innerHTML += `<h6 class='card-subtitle mb-2 text-muted'>To: ${email.recipients[0]}</h6>`;
     mail.innerHTML += `<h6 class='card-subtitle mb-2 text-muted'>${email.timestamp}</h6>`;
+    if (mailbox=='inbox'){
+    mail.innerHTML += `<button id="archive" value=${id}>Archive</button>`;
+   
+    }
+    if (mailbox =='archive'){
+      mail.innerHTML += `<button id="archive" value=${id}>Unarchive</button>`;
+      
+    }
     mail.innerHTML += `<p class='card-text'>${email.body}</p>`;
     mail.classList.add('card-body');
     document.querySelector('#email-full-view').append(mail);
+    document.querySelector('#archive').addEventListener('click', () => archive_email(id));
+
+
         
 });
 
 }
+
+function archive_email(id){
+  
+  fetch(`/emails/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+        archived: true
+    })
+  });
+
+}
+
+
 
 
